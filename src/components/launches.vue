@@ -35,7 +35,7 @@
             <td>{{result.rocket.rocket_name}}</td>
             <td>{{result.rocket.rocket_type}}</td>
             <td class="launch-date">{{result.launch_date_local | formatDate}}</td>
-            <td>{{result.details | trimString}}</td>
+            <td class="details">{{result.details | trimString}}<span v-if="result.details" class="tooltip">{{result.details}}</span></td>
             <td>{{result.rocket.rocket_id}}</td>
             <td class="article"><a class="link" :href="result.links.article_link"></a></td>
           </tr>
