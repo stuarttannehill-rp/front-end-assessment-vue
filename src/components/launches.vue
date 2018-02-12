@@ -47,7 +47,7 @@
 
 <script>
 import axios from 'axios'
-import _ from 'lodash'
+import orderBy from 'lodash/orderBy'
 
 export default {
   name: 'Launches',
@@ -61,10 +61,10 @@ export default {
   methods: {
     sorter: function (input) {
       if (input.target.classList.contains('desc')) {
-        this.results = _.orderBy(this.results, 'launch_date_unix', 'asc')
+        this.results = orderBy(this.results, 'launch_date_unix', 'asc')
         this.sortorder = 'asc'
       } else {
-        this.results = _.orderBy(this.results, 'launch_date_unix', 'desc')
+        this.results = orderBy(this.results, 'launch_date_unix', 'desc')
         this.sortorder = 'desc'
       }
 
