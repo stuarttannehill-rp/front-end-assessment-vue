@@ -29,15 +29,15 @@
           <th>ID</th>
           <th>Article</th>
         </thead>
-        <tbody v-for="result in results" :key="result.id">
+        <tbody v-for="(result, key) in results" :key="key">
           <tr>
             <td class="badge"><img :src="result.links.mission_patch"></td>
             <td>{{result.rocket.rocket_name}}</td>
             <td>{{result.rocket.rocket_type}}</td>
             <td class="launch-date">{{result.launch_date_local | formatDate}}</td>
             <td class="details">{{result.details | trimString}}<span v-if="result.details" class="tooltip">{{result.details}}</span></td>
-            <td>{{result.rocket.rocket_id}}</td>
-            <td class="article"><a class="link" :href="result.links.article_link"></a></td>
+            <td>{{result.flight_number}}</td>
+            <td class="article"><a v-if="result.links.article_link" class="link" :href="result.links.article_link"></a></td>
           </tr>
         </tbody>
     </table>
