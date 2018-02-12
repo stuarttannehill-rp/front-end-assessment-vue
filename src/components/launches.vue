@@ -24,7 +24,7 @@
           <th>Badge</th>
           <th>Rocket Name</th>
           <th>Rocket Type</th>
-          <th class="launch-date desc">Launch Date</th>
+          <th class="launch-date" :class="sortorder" @click="sorter">Launch Date</th>
           <th>Details</th>
           <th>ID</th>
           <th>Article</th>
@@ -47,16 +47,30 @@
 
 <script>
 import axios from 'axios'
+import _ from 'lodash'
 
 export default {
   name: 'Launches',
   data () {
     return {
       results: [],
-      error: []
+      error: [],
+      sortorder: 'asc'
     }
   },
+  methods: {
+    sorter: function (input) {
+      if (input.target.classList.contains('desc')) {
+        this.results = _.orderBy(this.results, 'launch_date_unix', 'asc')
+        this.sortorder = 'asc'
+      } else {
+        this.results = _.orderBy(this.results, 'launch_date_unix', 'desc')
+        this.sortorder = 'desc'
+      }
 
+      return this.results
+    }
+  },
   created () {
     axios.get('https://api.spacexdata.com/v2/launches')
       .then(res => {
