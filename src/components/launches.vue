@@ -9,15 +9,19 @@
         <span class="checkmark"></span>
       </label>
       <label class="custom-checkbox">
-        <input type="checkbox" value="reused">Reused
+        <input v-on:change="filterReuse = filterReuse === false ? true : false" type="checkbox" value="reused">Reused
         <span class="checkmark"></span>
       </label>
       <label class="custom-checkbox">
         <input type="checkbox" value="reddit">With Reddit
         <span class="checkmark"></span>
       </label>
+      <label class="custom-checkbox">
+        <input v-on:change="filterTesla = filterTesla === false ? true : false" type="checkbox" value="launch_tesla">Is Tesla Roadster?
+        <span class="checkmark"></span>
+      </label>
     </form>
-    <p class="showing">{{filteredItems.length}} launches</p>
+    <p class="showing">{{filteredItems.length}} launch<span v-if="filteredItems.length >= 2">es</span></p>
   </div>
   <div class="loading" v-if="isLoading">
     <img src="../assets/images/loading-rocket.png" >
@@ -61,7 +65,9 @@ export default {
       error: [],
       sortorder: 'asc',
       isLoading: true,
-      filterSuccess: false
+      filterSuccess: false,
+      filterReuse: false,
+      filterTesla: false
     }
   },
   methods: {
@@ -79,9 +85,24 @@ export default {
   },
   computed: {
     filteredItems () {
+      if (this.filterReuse === true && this.filterSuccess === true) {
+        return this.results.filter(result => {
+          return result.launch_success === true && result.rocket.first_stage.cores[0].reused === true
+        })
+      }
       if (this.filterSuccess === true) {
         return this.results.filter(result => {
           return result.launch_success === true
+        })
+      }
+      if (this.filterReuse === true) {
+        return this.results.filter(result => {
+          return result.rocket.first_stage.cores[0].reused === true
+        })
+      }
+      if (this.filterTesla === true) {
+        return this.results.filter(result => {
+          return result.rocket.second_stage.payloads[0].payload_id === 'Tesla Roadster'
         })
       } else {
         return this.results
