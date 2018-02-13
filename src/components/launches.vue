@@ -5,7 +5,7 @@
     <p class="notification">Updated</p>
     <form class="filters">
       <label class="custom-checkbox">
-        <input type="checkbox" value="launch_success">Land Success
+        <input v-on:change="filterSuccess = filterSuccess === false ? true : false" type="checkbox" value="launch_success">Land Success
         <span class="checkmark"></span>
       </label>
       <label class="custom-checkbox">
@@ -17,7 +17,7 @@
         <span class="checkmark"></span>
       </label>
     </form>
-    <p class="showing">{{this.results.length}} launches</p>
+    <p class="showing">{{filteredItems.length}} launches</p>
   </div>
   <div class="loading" v-if="isLoading">
     <img src="../assets/images/loading-rocket.png" >
@@ -33,7 +33,7 @@
         <th>ID</th>
         <th>Article</th>
       </thead>
-      <tbody v-for="(result, key) in results" :key="key">
+      <tbody v-for="(result, key) in filteredItems" :key="key">
         <tr>
           <td class="badge"><img :src="result.links.mission_patch"></td>
           <td>{{result.rocket.rocket_name}}</td>
@@ -60,7 +60,8 @@ export default {
       results: [],
       error: [],
       sortorder: 'asc',
-      isLoading: true
+      isLoading: true,
+      filterSuccess: false
     }
   },
   methods: {
@@ -74,6 +75,17 @@ export default {
       }
 
       return this.results
+    }
+  },
+  computed: {
+    filteredItems () {
+      if (this.filterSuccess === true) {
+        return this.results.filter(result => {
+          return result.launch_success === true
+        })
+      } else {
+        return this.results
+      }
     }
   },
   created () {
