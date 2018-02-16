@@ -89,6 +89,9 @@ export default {
         })
     },
     sorter: function (input) {
+      if (this.filteredLaunches.length <= 1) {
+        return false
+      }
       if (input.target.classList.contains('desc')) {
         this.results = orderBy(this.results, 'launch_date_unix', 'asc')
         this.sortorder = 'asc'
