@@ -1,29 +1,13 @@
 <template>
 <div>
   <div class='table-actions'>
-    <button class='refresh' type='button'>Refresh</button>
+    <button class='refresh' type='button' v-on:click='getLaunches()'>Refresh</button>
     <p class='notification'>Updated</p>
     <form class='filters'>
       <label class='custom-checkbox' v-for='(list, key) in this.filterOptions' :key='key'>
         <input v-on:change='updateFilters($event, list)' type='checkbox' :value=list.value>{{list.name}}
         <span class='checkmark'></span>
       </label>
-      <!-- <label class='custom-checkbox'>
-        <input v-on:change='filterSuccess = filterSuccess === false ? true : false' type='checkbox' value='launch_success'>Land Success
-        <span class='checkmark'></span>
-      </label>
-      <label class='custom-checkbox'>
-        <input v-on:change='filterReuse = filterReuse === false ? true : false' type='checkbox' value='reused'>Reused
-        <span class='checkmark'></span>
-      </label>
-      <label class='custom-checkbox'>
-        <input type='checkbox' value='reddit'>With Reddit
-        <span class='checkmark'></span>
-      </label>
-      <label class='custom-checkbox'>
-        <input v-on:change='filterTesla = filterTesla === false ? true : false' type='checkbox' value='launch_tesla'>Can haz Tesla?
-        <span class='checkmark'></span>
-      </label> -->
     </form>
     <p class='showing'>{{filteredLaunches.length}} launch<span v-if='filteredLaunches.length >= 2'>es</span> of {{this.results.length}}</p>
   </div>
@@ -82,11 +66,28 @@ export default {
         {
           name: 'With Reddit',
           value: 'reddit'
+        },
+        {
+          name: 'Can Haz Tesla?',
+          value: 'tesla'
         }
       ]
     }
   },
   methods: {
+    getLaunches: function () {
+      axios
+        .get('https://api.spacexdata.com/v2/launches')
+        .then(res => {
+          this.results = res.data
+          this.isLoading = false
+          console.log('loaded')
+        })
+        .catch(e => {
+          this.isLoading = false
+          this.errors.push(e)
+        })
+    },
     sorter: function (input) {
       if (input.target.classList.contains('desc')) {
         this.results = orderBy(this.results, 'launch_date_unix', 'asc')
@@ -147,6 +148,15 @@ export default {
                 matches.push(true)
               }
             }
+
+            if (filter === 'tesla') {
+              const entries = Object.entries(launch.rocket.second_stage.payloads)
+              for (let [, v] of entries) {
+                if (v.payload_id.toLowerCase().indexOf(filter) >= 0) {
+                  matches.push(true)
+                }
+              }
+            }
           }
 
           return matches.length === this.checkedFilters.length
@@ -157,16 +167,7 @@ export default {
     }
   },
   created () {
-    axios
-      .get('https://api.spacexdata.com/v2/launches')
-      .then(res => {
-        this.results = res.data
-        this.isLoading = false
-      })
-      .catch(e => {
-        this.isLoading = false
-        this.errors.push(e)
-      })
+    this.getLaunches()
   }
 }
 </script>
