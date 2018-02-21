@@ -138,7 +138,7 @@ export default {
               const links = Object.keys(launch.links)
               let match
 
-              // set match to true if launch has at least one reddit link prop that isn't null
+              // set match to true if launch has at least one reddit link prop that isn't null.
               for (let link of links) {
                 if (link.search(/reddit/i) === 0) {
                   if (launch.links[link] != null) {
